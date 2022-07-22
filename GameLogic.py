@@ -14,12 +14,20 @@ class Game2048(object):
 
     # ACTIONS
 
-    def mergeTiles(self, tile1, tile2):
-        return
-    def canMerge(self,tile1,tile2):
-        # if tile1 value == tile2 value
-        #   return True
-        return False
+    def mergeTiles(self, moveDirection, tile1: list, tile2: list):
+        if self.canMerge(tile1, tile2):
+            if moveDirection == 1 or moveDirection == 2:
+                self.board[tile1[0]][tile1[1]] *= 2
+                self.board[tile2[0]][tile2[1]] = 0
+            if moveDirection == 3 or moveDirection == 4:
+                self.board[tile1[0]][tile1[1]] *= 2
+                self.board[tile2[0]][tile2[1]] = 0
+        else:
+            return
+
+    def canMerge(self, tile1: list, tile2: list):
+        return self.board[tile1[0]][tile1[1]] == self.board[tile2[0]][tile2[1]]
+
     def isOpen(self,row,column):
         return self.board[row][column] == 0
 
@@ -28,7 +36,7 @@ class Game2048(object):
         column = random.randint(0,self.n_rows)
         val = random.randrange(2,4,2) #chose between either 2 or 4
 
-        if(self.isOpen(row,column)):
-            self.board[row][column]
+        if self.isOpen(row, column):
+            self.board[row][column] = val
 
 
