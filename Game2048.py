@@ -60,6 +60,7 @@ class Game2048(tk.Frame):
         for x in (range(p.LEN)):
             for y in range(p.LEN):
                 num = self.gameGrid[x][y]
+
                 # empty cell handling
                 if num == 0:
                     self.gameMatrix[x][y].configure(text='',bg=p.EMPTY_CELL_COLOR)

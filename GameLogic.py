@@ -29,7 +29,7 @@ def transpose(board):
 
 def mergeTiles( board):
     for x in range(4):
-        for y in range(4):
+        for y in range(4-1):
             if board[x][y] != 0 and board[x][y] == board[x][y+1]:
                 board[x][y] *=2
                 board[x][y+1] = 0
@@ -120,25 +120,19 @@ def moveDown(board):
 
 
 def verticleMoveAvailable(board):
-    canMove = False
+
     for x in range(3):
         for y in range(4):
             if board[x][y] == board[x+1][y]:
-                canMove = True
-
-    if not canMove:
-        print("column is full")
-    return canMove
+                return True
+    return False
 
 def horizontalMoveAvailable(board):
-    canMove = False
     for x in range(4):
         for y in range(3):
             if board[x][y] == board[x][y+1]:
-                canMove = True
-    if not canMove:
-        print("row is full")
-    return canMove
+                return True
+    return False
 
 
 def GameOver(board):
