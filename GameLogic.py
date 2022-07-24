@@ -1,42 +1,145 @@
-import random
+import random as r
+import properties as p
 
-class Game2048(object):
-    UP = None
-    DOWN = None
-    LEFT = None
-    RIGHT = None
+def newGame(size):
+    temp = []
+    for x in range(size):
+        temp.append([0]*size)
 
-    def __init__(self, row, column):
-        self.board = [[0 for x in range(row)] for y in range(row)]
-        self.n_rows = row
-        self.boardSize = len(self.board)
-        self.L_plus_ratio = False
+    temp = newTile(temp)
+    temp = newTile(temp)
+    return temp
+# ACTIONS
 
-    # ACTIONS
+def reverse(board):
+    temp = []
+    for x in range(p.LEN):
+        temp.append([])
+        for y in range(p.LEN):
+            temp[x].append(board[x][p.LEN - (y+1)])
+    return temp
 
-    def mergeTiles(self, moveDirection, tile1: list, tile2: list):
-        if self.canMerge(tile1, tile2):
-            if moveDirection == 1 or moveDirection == 2:
-                self.board[tile1[0]][tile1[1]] *= 2
-                self.board[tile2[0]][tile2[1]] = 0
-            if moveDirection == 3 or moveDirection == 4:
-                self.board[tile1[0]][tile1[1]] *= 2
-                self.board[tile2[0]][tile2[1]] = 0
-        else:
-            return
+def transpose(board):
+    temp = []
+    for x in range(p.LEN):
+        temp.append([])
+        for y in range(len(board)):
+            temp[x].append(board[y][x])
+    return temp
 
-    def canMerge(self, tile1: list, tile2: list):
-        return self.board[tile1[0]][tile1[1]] == self.board[tile2[0]][tile2[1]]
+def mergeTiles( board):
+    for x in range(4):
+        for y in range(4):
+            if board[x][y] != 0 and board[x][y] == board[x][y+1]:
+                board[x][y] *=2
+                board[x][y+1] = 0
+    return board
 
-    def isOpen(self,row,column):
-        return self.board[row][column] == 0
+def newTile(board):
+    row = r.randint(0,p.LEN-1)
+    col = r.randint(0,p.LEN-1)
 
-    def newTile(self):
-        row = random.randint(0,self.n_rows)
-        column = random.randint(0,self.n_rows)
-        val = random.randrange(2,4,2) #chose between either 2 or 4
-
-        if self.isOpen(row, column):
-            self.board[row][column] = val
+    while board[row][col] !=0:
+        row = r.randint(0, p.LEN-1)
+        col = r.randint(0, p.LEN-1)
+    board[row][col] = r.choice([2,4])
+    return board
 
 
+
+
+def shift(board):
+    temp = [[0] * 4 for x in range(4)]
+    for x in range(4):
+        tempIndex = 0
+        for y in range(4):
+            if board[x][y] != 0:
+                temp[x][tempIndex] = board[x][y]
+                tempIndex+=1
+    board = temp
+    return board
+
+def moveLeft(board):
+    if not horizontalMoveAvailable(board):
+        return
+    print("moved left")
+    board = shift(board)
+    board = mergeTiles(board)
+    board = shift(board)
+
+    board = newTile(board)
+
+    return board
+
+def moveUp(board):
+    if not verticleMoveAvailable(board):
+        return
+    print("moved up")
+
+    board = transpose(board)
+    board = shift(board)
+    board = mergeTiles(board)
+    board = shift(board)
+    board = transpose(board)
+
+    board = newTile(board)
+
+    return board
+
+def moveRight(board):
+    if not horizontalMoveAvailable(board):
+        return
+    print("moved right")
+    board = reverse(board)
+
+    board = shift(board)
+    board = mergeTiles(board)
+    board = shift(board)
+
+    board = reverse(board)
+
+    board = newTile(board)
+
+    return board
+
+def moveDown(board):
+    if not verticleMoveAvailable(board):
+        return
+    board = transpose(board)
+    board = reverse(board)
+    board = shift(board)
+    board = mergeTiles(board)
+    board = shift(board)
+    board = reverse(board)
+    board = transpose(board)
+
+    board = newTile(board)
+
+    return board
+
+
+
+def verticleMoveAvailable(board):
+    canMove = False
+    for x in range(3):
+        for y in range(4):
+            if board[x][y] == board[x+1][y]:
+                canMove = True
+
+    if not canMove:
+        print("column is full")
+    return canMove
+
+def horizontalMoveAvailable(board):
+    canMove = False
+    for x in range(4):
+        for y in range(3):
+            if board[x][y] == board[x][y+1]:
+                canMove = True
+    if not canMove:
+        print("row is full")
+    return canMove
+
+
+def GameOver(board):
+    return not verticleMoveAvailable(board) and not horizontalMoveAvailable(board)
